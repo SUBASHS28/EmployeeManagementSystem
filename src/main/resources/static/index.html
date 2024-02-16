@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Employee List</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<h1>Employee Details:</h1>
+<button onclick="addEmployee()">Add Employee</button>
+<br>
+<br>
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Number</th>
+        <th>Address Line 1</th>
+        <th>Address Line 2</th>
+        <th>City</th>
+        <th>Zipcode</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody id="employeeTable">
+    </tbody>
+</table>
+<script>
+    $(document).ready(function(){
+        loadEmployeeList();
+    });
+    function loadEmployeeList() {
+        $.ajax({
+            url: "/api/employees",
+            type: "GET",
+            success: function(employees) {
+                $('#employeeTable').empty();
+                $.each(employees, function(i, employee) {
+                    $('#employeeTable').append('<tr>' +
+                        '<td>'+employee.id +'</td>' +
+                        '<td>'+employee.name +'</td>' +
+                        '<td>'+employee.number +'</td>' +
+                        '<td>'+employee.address1 +'</td>' +
+                        '<td>'+employee.address2 +'</td>' +
+                        '<td>'+employee.city +'</td>' +
+                        '<td>'+employee.zipcode +'</td>' +
+                        '<td>'+
+                        '<button onclick="editEmployee(' + employee.id + ')">Edit</button>' +
+                        '<button onclick="deleteEmployee(' + employee.id + ')">Delete</button>' +
+                        '</td>' +
+                        '</tr>');
+                });
+            },
+            error: function() {
+                console.error("Error");
+            }
+        });
+    }
+    function editEmployee(id) {
+        window.location.href = "/edit_employee.html?id=" + id;
+    }
+
+    function deleteEmployee(id) {
+        if (confirm("Confirm:Do you want to delete the employee?")) {
+            $.ajax({
+                url: "/api/employees/" + id,
+                type: "DELETE",
+                success: function() {
+                    alert("Employee deleted successfully.");
+                    loadEmployeeList();
+                },
+                error: function() {
+                    console.error("Error");
+                }
+            });
+        }
+    }
+
+    function addEmployee() {
+        window.location.href = "/add_employee.html";
+    }
+</script>
+<br>
+<br>
+<a href="search_employee.html">Search Employee</a>
+</body>
+</html>

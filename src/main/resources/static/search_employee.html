@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Employee</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<h2>Search Employee</h2>
+<label for="searchId">Enter Employee ID:</label>
+<input type="text" id="searchId" name="searchId" required><br><br>
+<button type="button" onclick="searchEmployee()">Search</button>
+<div id="searchResults"></div>
+<script>
+    function searchEmployee() {
+        var searchId = $('#searchId').val();
+        if (!searchId) {
+            alert("Please enter an ID to search.");
+            return;
+        }
+        $.ajax({
+            url: "/api/employees/" + searchId,
+            type: "GET",
+            success: function(employee) {
+                $('#searchResults').empty();
+                if (employee && Object.keys(employee).length > 0) {
+                    $('#searchResults').append(
+                        '<p>ID: ' + employee.id + '</p>' +
+                        '<p>Name: ' + employee.name + '</p>' +
+                        '<p>Number: ' + employee.number + '</p>' +
+                        '<p>Address Line 1: ' + employee.address1 + '</p>' +
+                        '<p>Address Line 2: ' + employee.address2 + '</p>' +
+                        '<p>City: ' + employee.city + '</p>' +
+                        '<p>Zipcode: ' + employee.zipcode + '</p>'
+                    );
+                } else {
+                    $('#searchResults').append('<p>Employee not found.</p>');
+                }
+            },
+            error: function() {
+                console.error("Error");
+            }
+        });
+    }
+</script>
+<br>
+<br>
+<a href="index.html">Back</a>
+</body>
+</html>
